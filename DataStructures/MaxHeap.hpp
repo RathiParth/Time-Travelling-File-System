@@ -2,8 +2,9 @@
 #define MAXHEAP_HPP
 
 #include <vector>
-#include <stdexcept>
 #include <algorithm> // For std::swap
+#include <iostream>  // For std::cerr
+#include <cstdlib>   // For exit()
 
 // A templated Max-Heap implementation that accepts a custom comparator.
 template <typename T, typename Comparator>
@@ -47,16 +48,19 @@ private:
 public:
     MaxHeap(Comparator comp = Comparator()) : compare(comp) {}
 
-    // Inserts a new element into the heap. [4]
+    // Inserts a new element into the heap.
     void insert(const T& value) {
         heap.push_back(value);
         heapifyUp(heap.size() - 1);
     }
 
-    // Removes and returns the maximum element from the heap. [4]
+    // Removes and returns the maximum element from the heap.
     T extractMax() {
         if (isEmpty()) {
-            throw std::out_of_range("Heap is empty");
+            // This is a critical error, as the calling code should prevent this.
+            // Terminate the program to avoid undefined behavior.
+            std::cerr << "Error: Attempted to extract from an empty heap. Terminating." << std::endl;
+            exit(1);
         }
         T max_val = heap;
         heap = heap.back();

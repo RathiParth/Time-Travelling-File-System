@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <string>
-#include <stdexcept>
 
 // Functor for hashing keys. Can be specialized for different types.
 template <typename K>
