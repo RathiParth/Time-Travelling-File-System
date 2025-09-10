@@ -8,13 +8,12 @@ File::File(const std::string& name, unsigned long long creation_time)
     root->snapshot_timestamp = creation_time;
     active_version = root;
     last_modification_time = creation_time;
-
     version_map = new HashMap<int, TreeNode*>();
     version_map->insert(0, root);
 }
 
 File::~File() {
-    delete root; // Triggers recursive deletion
+    delete root;
     delete version_map;
 }
 
@@ -27,24 +26,24 @@ std::string File::read() const {
 }
 
 void File::insert(const std::string& content, unsigned long long mod_time) {
-    if (active_version->snapshot_timestamp!= 0) { // Is a snapshot
+    if (active_version->snapshot_timestamp!= 0) {
         TreeNode* new_version = new TreeNode(next_version_id++, active_version->content + content, mod_time, active_version);
         active_version->children.push_back(new_version);
         active_version = new_version;
         version_map->insert(new_version->version_id, new_version);
-    } else { // Not a snapshot, modify in place
+    } else {
         active_version->content += content;
     }
     last_modification_time = mod_time;
 }
 
 void File::update(const std::string& content, unsigned long long mod_time) {
-    if (active_version->snapshot_timestamp!= 0) { // Is a snapshot
+    if (active_version->snapshot_timestamp!= 0) {
         TreeNode* new_version = new TreeNode(next_version_id++, content, mod_time, active_version);
         active_version->children.push_back(new_version);
         active_version = new_version;
         version_map->insert(new_version->version_id, new_version);
-    } else { // Not a snapshot, modify in place
+    } else {
         active_version->content = content;
     }
     last_modification_time = mod_time;
@@ -79,7 +78,6 @@ void File::history() const {
     TreeNode* current = active_version;
     while (current!= nullptr) {
         if (current->snapshot_timestamp!= 0) {
-            // Print the raw timestamp as an integer
             std::cout << "  - Version " << current->version_id 
                       << ": " << current->message << std::endl;
         }

@@ -3,16 +3,17 @@
 
 #include "File.hpp"
 #include "../DataStructures/MaxHeap.hpp"
+#include "../DataStructures/HashMap.hpp"
 #include <string>
 
-// Comparator for ordering File pointers by last modification time.
+class File;
+
 struct CompareByModTime {
     bool operator()(const File* a, const File* b) const {
         return a->getLastModTime() < b->getLastModTime();
     }
 };
 
-// Comparator for ordering File pointers by version count.
 struct CompareByVersionCount {
     bool operator()(const File* a, const File* b) const {
         return a->getTotalVersions() < b->getTotalVersions();
@@ -21,12 +22,9 @@ struct CompareByVersionCount {
 
 class FileSystem {
 private:
-    // Use the custom HashMap for file management.
     HashMap<std::string, File*>* files;
     MaxHeap<File*, CompareByModTime>* recent_files_heap;
     MaxHeap<File*, CompareByVersionCount>* biggest_trees_heap;
-
-    // A simple counter to simulate time.
     unsigned long long system_clock;
 
     void rebuildHeaps();

@@ -4,7 +4,6 @@
 #include <sstream>
 #include <vector>
 
-// Function to parse the remainder of a stringstream after the command and filename.
 std::string get_remaining_content(std::stringstream& ss) {
     std::string content;
     std::string temp;
@@ -22,7 +21,7 @@ int main() {
     std::string line;
 
     while (std::getline(std::cin, line)) {
-        std::stringstream ss(line); //
+        std::stringstream ss(line);
         std::string command;
         ss >> command;
 
@@ -74,11 +73,11 @@ int main() {
         } else if (command == "RECENT_FILES") {
             int num;
             if (ss >> num) fs.recentFiles(num);
-            else fs.recentFiles(-1); // -1 indicates no limit
+            else fs.recentFiles(-1);
         } else if (command == "BIGGEST_TREES") {
             int num;
             if (ss >> num) fs.biggestTrees(num);
-            else fs.biggestTrees(-1); // -1 indicates no limit
+            else fs.biggestTrees(-1);
         } else if (!command.empty()) {
             std::cerr << "Error: Unknown command '" << command << "'." << std::endl;
         }

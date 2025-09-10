@@ -11,18 +11,14 @@ public:
     std::string message;
     unsigned long long created_timestamp;
     unsigned long long snapshot_timestamp;
-
     TreeNode* parent;
     std::vector<TreeNode*> children;
 
-    // Constructor to initialize a new version node.
-    // The initializer list now matches the declaration order to fix the -Wreorder warning.
     TreeNode(int id, std::string initial_content, unsigned long long creation_time, TreeNode* p = nullptr)
         : version_id(id), content(initial_content), message(""),
           created_timestamp(creation_time), snapshot_timestamp(0),
           parent(p) {}
 
-    // Destructor to recursively delete all child nodes.
     ~TreeNode() {
         for (TreeNode* child : children) {
             delete child;

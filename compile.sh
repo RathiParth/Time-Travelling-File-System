@@ -4,6 +4,6 @@
 
 echo "Compiling the Time-Travelling File System..."
 
-g++ -std=c++17 -Wall -o filesystem main.cpp Core/File.cpp Core/FileSystem.cpp
+g++ -std=c++17 -Wall -o filesystem main.cpp File/File.cpp File/FileSystem.cpp
 
 echo "Compilation finished. Executable 'filesystem' created."
