@@ -2,13 +2,35 @@
 #define HASHMAP_HPP
 
 #include <vector>
+#include <string>
 #include <stdexcept>
 
-// A templated HashMap implementation using separate chaining for collision resolution.
+// Functor for hashing keys. Can be specialized for different types.
+template <typename K>
+struct KeyHasher {
+    // Default hash for integral types
+    size_t operator()(const K& key, int capacity) const {
+        return static_cast<size_t>(key) % capacity;
+    }
+};
+
+// Specialization for std::string keys
+template <>
+struct KeyHasher<std::string> {
+    size_t operator()(const std::string& key, int capacity) const {
+        size_t hash = 0;
+        for (char c : key) {
+            // A simple but effective string hash algorithm
+            hash = hash * 31 + c;
+        }
+        return hash % capacity;
+    }
+};
+
+
 template <typename K, typename V>
 class HashMap {
 private:
-    // Node structure for the linked lists in each bucket.
     struct HashNode {
         K key;
         V value;
@@ -20,19 +42,17 @@ private:
     std::vector<HashNode*> buckets;
     int capacity;
     int num_elements;
+    KeyHasher<K> hasher;
 
-    // Hash function to map keys to bucket indices.
     int hash(const K& key) const {
-        return static_cast<int>(key) % capacity;
+        return hasher(key, capacity);
     }
 
 public:
-    // Constructor initializes the bucket array.
     HashMap(int initial_capacity = 16) : capacity(initial_capacity), num_elements(0) {
         buckets.resize(capacity, nullptr);
     }
 
-    // Destructor to clean up all dynamically allocated nodes.
     ~HashMap() {
         for (int i = 0; i < capacity; ++i) {
             HashNode* entry = buckets[i];
@@ -44,16 +64,15 @@ public:
         }
     }
 
-    // Inserts a key-value pair. If the key exists, it updates the value. [3]
     void insert(const K& key, const V& value) {
         int bucket_index = hash(key);
         HashNode* head = buckets[bucket_index];
         
-        // Check if key already exists
+        // Check if key already exists and update it
         HashNode* current = head;
         while (current!= nullptr) {
             if (current->key == key) {
-                current->value = value; // Update existing key
+                current->value = value;
                 return;
             }
             current = current->next;
@@ -66,7 +85,6 @@ public:
         num_elements++;
     }
 
-    // Retrieves the value associated with a key. Returns a pointer to the value or nullptr if not found. [3]
     V* get(const K& key) const {
         int bucket_index = hash(key);
         HashNode* entry = buckets[bucket_index];
@@ -80,7 +98,6 @@ public:
         return nullptr;
     }
 
-    // Removes a key-value pair.
     void remove(const K& key) {
         int bucket_index = hash(key);
         HashNode* head = buckets[bucket_index];
@@ -92,17 +109,30 @@ public:
             entry = entry->next;
         }
 
-        if (entry == nullptr) { // Key not found
+        if (entry == nullptr) {
             return;
         }
 
-        if (prev == nullptr) { // Node to remove is the head
+        if (prev == nullptr) {
             buckets[bucket_index] = entry->next;
         } else {
             prev->next = entry->next;
         }
         delete entry;
         num_elements--;
+    }
+
+    // Returns a vector of all values in the HashMap for iteration purposes.
+    std::vector<V> get_all_values() const {
+        std::vector<V> values;
+        for (int i = 0; i < capacity; ++i) {
+            HashNode* entry = buckets[i];
+            while (entry!= nullptr) {
+                values.push_back(entry->value);
+                entry = entry->next;
+            }
+        }
+        return values;
     }
 };
 
