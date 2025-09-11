@@ -22,12 +22,12 @@ public:
     unsigned long long getLastModTime() const;
     int getTotalVersions() const;
 
-    std::string read() const;
-    void insert(const std::string& content, unsigned long long mod_time);
-    void update(const std::string& content, unsigned long long mod_time);
-    void snapshot(const std::string& message, unsigned long long snap_time);
-    bool rollback(int versionID = -1);
-    void history() const;
+    std::string READ() const;
+    void INSERT(const std::string& content, unsigned long long mod_time);
+    void UPDATE(const std::string& content, unsigned long long mod_time);
+    void SNAPSHOT(const std::string& message, unsigned long long snap_time);
+    bool ROLLBACK(int versionID = -1);
+    void HISTORY() const;
 };
 
 #endif // FILE_HPP

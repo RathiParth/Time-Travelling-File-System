@@ -33,15 +33,15 @@ public:
     FileSystem();
     ~FileSystem();
 
-    void create(const std::string& filename);
-    void read(const std::string& filename);
-    void insert(const std::string& filename, const std::string& content);
-    void update(const std::string& filename, const std::string& content);
-    void snapshot(const std::string& filename, const std::string& message);
-    void rollback(const std::string& filename, int versionID = -1);
-    void history(const std::string& filename);
-    void recentFiles(int num);
-    void biggestTrees(int num);
+    void CREATE(const std::string& filename);
+    void READ(const std::string& filename);
+    void INSERT(const std::string& filename, const std::string& content);
+    void UPDATE(const std::string& filename, const std::string& content);
+    void SNAPSHOT(const std::string& filename, const std::string& message);
+    void ROLLBACK(const std::string& filename, int versionID = -1);
+    void HISTORY(const std::string& filename);
+    void RECENT_FILES(int num);
+    void BIGGEST_TREES(int num);
 };
 
 #endif // FILESYSTEM_HPP

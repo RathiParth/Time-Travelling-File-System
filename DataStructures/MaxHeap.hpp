@@ -44,7 +44,7 @@ private:
 public:
     MaxHeap(Comparator comp = Comparator()) : compare(comp) {}
 
-    void insert(const T& value) {
+    void INSERT(const T& value) {
         heap.push_back(value);
         heapifyUp(heap.size() - 1);
     }

@@ -57,7 +57,7 @@ public:
         }
     }
 
-    void insert(const K& key, const V& value) {
+    void INSERT(const K& key, const V& value) {
         int bucket_index = hash(key);
         HashNode* head = buckets[bucket_index];
         HashNode* current = head;
