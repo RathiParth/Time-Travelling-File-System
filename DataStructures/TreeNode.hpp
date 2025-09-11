@@ -3,18 +3,20 @@
 
 #include <string>
 #include <vector>
+#include <ctime> // Required for time_t
 
 class TreeNode {
 public:
     int version_id;
     std::string content;
     std::string message;
-    unsigned long long created_timestamp;
-    unsigned long long snapshot_timestamp;
+    time_t created_timestamp; // Changed to time_t
+    time_t snapshot_timestamp; // Changed to time_t
     TreeNode* parent;
     std::vector<TreeNode*> children;
 
-    TreeNode(int id, std::string initial_content, unsigned long long creation_time, TreeNode* p = nullptr)
+    // Updated constructor to use time_t
+    TreeNode(int id, std::string initial_content, time_t creation_time, TreeNode* p = nullptr)
         : version_id(id), content(initial_content), message(""),
           created_timestamp(creation_time), snapshot_timestamp(0),
           parent(p) {}
