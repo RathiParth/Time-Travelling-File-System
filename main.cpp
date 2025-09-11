@@ -4,7 +4,7 @@
 #include <sstream>
 #include <vector>
 
-std::string get_remaining_content(std::stringstream& ss) {
+std::string remain_content(std::stringstream& ss) {
     std::string content;
     std::string temp;
     if (ss >> temp) {
@@ -36,7 +36,7 @@ int main() {
         } else if (command == "INSERT") {
             std::string filename;
             if (ss >> filename) {
-                std::string content = get_remaining_content(ss);
+                std::string content = remain_content(ss);
                 fs.INSERT(filename, content);
             } else {
                 std::cerr << "Usage: INSERT <filename> <content>" << std::endl;
@@ -44,7 +44,7 @@ int main() {
         } else if (command == "UPDATE") {
             std::string filename;
             if (ss >> filename) {
-                std::string content = get_remaining_content(ss);
+                std::string content = remain_content(ss);
                 fs.UPDATE(filename, content);
             } else {
                 std::cerr << "Usage: UPDATE <filename> <content>" << std::endl;
@@ -52,7 +52,7 @@ int main() {
         } else if (command == "SNAPSHOT") {
             std::string filename;
             if (ss >> filename) {
-                std::string message = get_remaining_content(ss);
+                std::string message = remain_content(ss);
                 fs.SNAPSHOT(filename, message);
             } else {
                 std::cerr << "Usage: SNAPSHOT <filename> <message>" << std::endl;

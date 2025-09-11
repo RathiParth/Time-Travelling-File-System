@@ -4,8 +4,8 @@
 
 FileSystem::FileSystem() : system_clock(0) {
     files = new HashMap<std::string, File*>();
-    recent_files_heap = new MaxHeap<File*, CompareByModTime>();
-    biggest_trees_heap = new MaxHeap<File*, CompareByVersionCount>();
+    recent_files_heap = new MaxHeap<File*, ChangeT>();
+    biggest_trees_heap = new MaxHeap<File*, VersionCount>();
 }
 
 FileSystem::~FileSystem() {
@@ -106,19 +106,18 @@ void FileSystem::HISTORY(const std::string& filename) {
 }
 
 void FileSystem::RECENT_FILES(int num) {
-    MaxHeap<File*, CompareByModTime> temp_heap = *recent_files_heap;
+    MaxHeap<File*, ChangeT> temp_heap = *recent_files_heap;
     std::cout << "Most Recently Modified Files:" << std::endl;
     int count = 0;
     while (!temp_heap.isEmpty() && (num == -1 || count < num)) {
         File* file = temp_heap.extractMax();
-        std::cout << "  - " << file->getFilename() 
-                  << " (Last modified at time: " << file->getLastModTime() << ")" << std::endl;
+        std::cout << "  - " << file->getFilename() << " (Last modified at time: " << file->LastChangeT() << ")" << std::endl;
         count++;
     }
 }
 
 void FileSystem::BIGGEST_TREES(int num) {
-    MaxHeap<File*, CompareByVersionCount> temp_heap = *biggest_trees_heap;
+    MaxHeap<File*, VersionCount> temp_heap = *biggest_trees_heap;
     std::cout << "Files with Most Versions:" << std::endl;
     int count = 0;
     while (!temp_heap.isEmpty() && (num == -1 || count < num)) {

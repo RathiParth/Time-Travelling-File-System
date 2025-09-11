@@ -1,13 +1,13 @@
 #include "File.hpp"
 #include <iostream>
 
-File::File(const std::string& name, unsigned long long creation_time) 
+File::File(const std::string& name, unsigned long long t0) 
     : filename(name), next_version_id(1) {
-    root = new TreeNode(0, "", creation_time, nullptr);
+    root = new TreeNode(0, "", t0, nullptr);
     root->message = "Initial version";
-    root->snapshot_timestamp = creation_time;
-    active_version = root;
-    last_modification_time = creation_time;
+    root->snapshot_timestamp = t0;
+    curr_version = root;
+    last_change_t = t0;
     version_map = new HashMap<int, TreeNode*>();
     version_map->INSERT(0, root);
 }
@@ -18,41 +18,41 @@ File::~File() {
 }
 
 std::string File::getFilename() const { return filename; }
-unsigned long long File::getLastModTime() const { return last_modification_time; }
+unsigned long long File::LastChangeT() const { return last_change_t; }
 int File::getTotalVersions() const { return next_version_id; }
 
 std::string File::READ() const {
-    return active_version->content;
+    return curr_version->content;
 }
 
 void File::INSERT(const std::string& content, unsigned long long mod_time) {
-    if (active_version->snapshot_timestamp!= 0) {
-        TreeNode* new_version = new TreeNode(next_version_id++, active_version->content + content, mod_time, active_version);
-        active_version->children.push_back(new_version);
-        active_version = new_version;
+    if (curr_version->snapshot_timestamp!= 0) {
+        TreeNode* new_version = new TreeNode(next_version_id++, curr_version->content + content, mod_time, curr_version);
+        curr_version->children.push_back(new_version);
+        curr_version = new_version;
         version_map->INSERT(new_version->version_id, new_version);
     } else {
-        active_version->content += content;
+        curr_version->content += content;
     }
-    last_modification_time = mod_time;
+    last_change_t = mod_time;
 }
 
 void File::UPDATE(const std::string& content, unsigned long long mod_time) {
-    if (active_version->snapshot_timestamp!= 0) {
-        TreeNode* new_version = new TreeNode(next_version_id++, content, mod_time, active_version);
-        active_version->children.push_back(new_version);
-        active_version = new_version;
+    if (curr_version->snapshot_timestamp!= 0) {
+        TreeNode* new_version = new TreeNode(next_version_id++, content, mod_time, curr_version);
+        curr_version->children.push_back(new_version);
+        curr_version = new_version;
         version_map->INSERT(new_version->version_id, new_version);
     } else {
-        active_version->content = content;
+        curr_version->content = content;
     }
-    last_modification_time = mod_time;
+    last_change_t = mod_time;
 }
 
 void File::SNAPSHOT(const std::string& message, unsigned long long snap_time) {
-    if (active_version->snapshot_timestamp == 0) {
-        active_version->message = message;
-        active_version->snapshot_timestamp = snap_time;
+    if (curr_version->snapshot_timestamp == 0) {
+        curr_version->message = message;
+        curr_version->snapshot_timestamp = snap_time;
     }
 }
 
@@ -60,13 +60,13 @@ bool File::ROLLBACK(int versionID) {
     if (versionID!= -1) {
         TreeNode** target_node_ptr = version_map->get(versionID);
         if (target_node_ptr) {
-            active_version = *target_node_ptr;
+            curr_version = *target_node_ptr;
             return true;
         }
         return false;
     } else {
-        if (active_version->parent) {
-            active_version = active_version->parent;
+        if (curr_version->parent) {
+            curr_version = curr_version->parent;
             return true;
         }
         return false;
@@ -75,11 +75,10 @@ bool File::ROLLBACK(int versionID) {
 
 void File::HISTORY() const {
     std::cout << "History for file: " << filename << std::endl;
-    TreeNode* current = active_version;
+    TreeNode* current = curr_version;
     while (current!= nullptr) {
         if (current->snapshot_timestamp!= 0) {
-            std::cout << "  - Version " << current->version_id 
-                      << ": " << current->message << std::endl;
+            std::cout << "  - Version " << current->version_id << ": " << current->message << std::endl;
         }
         current = current->parent;
     }

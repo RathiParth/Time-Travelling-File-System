@@ -43,9 +43,20 @@ private:
 public:
     MaxHeap(Comparator comp = Comparator()) : compare(comp) {}
 
+    bool isEmpty() const {
+        return heap.empty();
+    }
     void INSERT(const T& value) {
         heap.push_back(value);
         heapifyUp(heap.size() - 1);
+    }
+
+    T peekMax() const {
+        if (isEmpty()) {
+            std::cerr << "Error: Attempted to peek into an empty heap. Returning default-constructed value." << std::endl;
+            return T();
+        }
+        return heap[0];
     }
 
     T extractMax() {
@@ -69,15 +80,7 @@ public:
         
         // 5. Return the stored max value.
         return max_val;
-    }
-
-    T peekMax() const {
-        if (isEmpty()) {
-            std::cerr << "Error: Attempted to peek into an empty heap. Returning default-constructed value." << std::endl;
-            return T();
-        }
-        return heap[0];
-    }
+    }    
 
     bool isEmpty() const {
         return heap.empty();

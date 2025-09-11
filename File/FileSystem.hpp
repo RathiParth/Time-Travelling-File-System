@@ -8,13 +8,13 @@
 
 class File;
 
-struct CompareByModTime {
+struct ChangeT {
     bool operator()(const File* a, const File* b) const {
-        return a->getLastModTime() < b->getLastModTime();
+        return a->LastChangeT() < b->LastChangeT();
     }
 };
 
-struct CompareByVersionCount {
+struct VersionCount {
     bool operator()(const File* a, const File* b) const {
         return a->getTotalVersions() < b->getTotalVersions();
     }
@@ -23,8 +23,8 @@ struct CompareByVersionCount {
 class FileSystem {
 private:
     HashMap<std::string, File*>* files;
-    MaxHeap<File*, CompareByModTime>* recent_files_heap;
-    MaxHeap<File*, CompareByVersionCount>* biggest_trees_heap;
+    MaxHeap<File*, ChangeT>* recent_files_heap;
+    MaxHeap<File*, VersionCount>* biggest_trees_heap;
     unsigned long long system_clock;
 
     void rebuildHeaps();

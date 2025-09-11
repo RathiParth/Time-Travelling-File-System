@@ -4,13 +4,6 @@
 #include <vector>
 #include <string>
 
-template <typename K>
-struct KeyHasher {
-    size_t operator()(const K& key, int capacity) const {
-        return static_cast<size_t>(key) % capacity;
-    }
-};
-
 template <>
 struct KeyHasher<std::string> {
     size_t operator()(const std::string& key, int capacity) const {
@@ -22,19 +15,26 @@ struct KeyHasher<std::string> {
     }
 };
 
+template <typename K>
+struct KeyHasher {
+    size_t operator()(const K& key, int capacity) const {
+        return static_cast<size_t>(key) % capacity;
+    }
+};
+
 template <typename K, typename V>
 class HashMap {
 private:
     struct HashNode {
         K key;
-        V value;
+        V val;
         HashNode* next;
-        HashNode(K k, V v) : key(k), value(v), next(nullptr) {}
+        HashNode(K k, V v) : key(k), val(v), next(nullptr) {}
     };
 
     std::vector<HashNode*> buckets;
     int capacity;
-    int num_elements;
+    int numElements;
     KeyHasher<K> hasher;
 
     int hash(const K& key) const {
@@ -42,7 +42,7 @@ private:
     }
 
 public:
-    HashMap(int initial_capacity = 16) : capacity(initial_capacity), num_elements(0) {
+    HashMap(int initial_capacity = 16) : capacity(initial_capacity), numElements(0) {
         buckets.resize(capacity, nullptr);
     }
 
@@ -57,33 +57,33 @@ public:
         }
     }
 
-    void INSERT(const K& key, const V& value) {
-        int bucket_index = hash(key);
-        HashNode* head = buckets[bucket_index];
-        HashNode* current = head;
-        while (current!= nullptr) {
-            if (current->key == key) {
-                current->value = value;
-                return;
-            }
-            current = current->next;
-        }
-        HashNode* newNode = new HashNode(key, value);
-        newNode->next = head;
-        buckets[bucket_index] = newNode;
-        num_elements++;
-    }
-
     V* get(const K& key) const {
         int bucket_index = hash(key);
         HashNode* entry = buckets[bucket_index];
         while (entry!= nullptr) {
             if (entry->key == key) {
-                return &(entry->value);
+                return &(entry->val);
             }
             entry = entry->next;
         }
         return nullptr;
+    }
+    
+    void INSERT(const K& key, const V& val) {
+        int bucket_index = hash(key);
+        HashNode* head = buckets[bucket_index];
+        HashNode* curr = head;
+        while (curr!= nullptr) {
+            if (curr->key == key) {
+                curr->val = val;
+                return;
+            }
+            curr = curr->next;
+        }
+        HashNode* newNode = new HashNode(key, val);
+        newNode->next = head;
+        buckets[bucket_index] = newNode;
+        numElements++;
     }
 
     std::vector<V> get_all_values() const {
@@ -91,7 +91,7 @@ public:
         for (int i = 0; i < capacity; ++i) {
             HashNode* entry = buckets[i];
             while (entry!= nullptr) {
-                values.push_back(entry->value);
+                values.push_back(entry->val);
                 entry = entry->next;
             }
         }
