@@ -4,7 +4,6 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include <cstdlib>
 
 template <typename T, typename Comparator>
 class MaxHeap {
@@ -28,7 +27,7 @@ private:
         if (right < heap_size && compare(heap[largest], heap[right])) {
             largest = right;
         }
-        if (largest!= i) {
+        if (largest != i) {
             std::swap(heap[i], heap[largest]);
             heapifyDown(largest);
         }
@@ -51,8 +50,8 @@ public:
 
     T extractMax() {
         if (isEmpty()) {
-            std::cerr << "Error: Attempted to extract from an empty heap. Terminating." << std::endl;
-            exit(1);
+            std::cerr << "Error: Attempted to extract from an empty heap. Returning default-constructed value." << std::endl;
+            return T();
         }
         // 1. Store the root element (the max value).
         T max_val = heap[0];
@@ -71,13 +70,27 @@ public:
         // 5. Return the stored max value.
         return max_val;
     }
-    
+
+    T peekMax() const {
+        if (isEmpty()) {
+            std::cerr << "Error: Attempted to peek into an empty heap. Returning default-constructed value." << std::endl;
+            return T();
+        }
+        return heap[0];
+    }
+
+    bool isEmpty() const {
+        return heap.empty();
+    }
+
+    int size() const {
+        return heap.size();
+    }
+
     void clear() {
         heap.clear();
     }
-
-    bool isEmpty() const { return heap.empty(); }
-    int size() const { return heap.size(); }
 };
 
 #endif // MAXHEAP_HPP
+
