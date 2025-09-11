@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 
+using namespace std;
 
 template <typename K>
 struct KeyHasher {
@@ -13,10 +14,10 @@ struct KeyHasher {
     }
 };
 
-// Template specialization for std::string keys.
+// Template specialization for string keys.
 template <>
-struct KeyHasher<std::string> {
-    size_t operator()(const std::string& key, int capacity) const {
+struct KeyHasher<string> {
+    size_t operator()(const string& key, int capacity) const {
         size_t hash = 0;
         // A common string hashing algorithm.
         for (char c : key) {
@@ -36,7 +37,7 @@ private:
         HashNode(K k, V v) : key(k), value(v), next(nullptr) {}
     };
 
-    std::vector<HashNode*> buckets;
+    vector<HashNode*> buckets;
     int capacity;
     int num_elements; // Corrected member name from 'numElements' to 'num_elements'
     KeyHasher<K> hasher;
@@ -90,8 +91,8 @@ public:
         num_elements++;
     }
 
-    std::vector<V> get_all_values() const {
-        std::vector<V> values;
+    vector<V> get_all_values() const {
+        vector<V> values;
         for (int i = 0; i < capacity; ++i) {
             HashNode* entry = buckets[i];
             while (entry != nullptr) {
@@ -103,4 +104,4 @@ public:
     }
 };
 
-#endif // HASHMAP_HPP
+#endif

@@ -2,8 +2,8 @@
 #include <iostream>
 #include <vector>
 #include <ctime>
-#include <iomanip> // Required for time formatting
-#include <sstream> // Required for string stream
+#include <iomanip> 
+#include <sstream> 
 
 using namespace std;
 
@@ -115,7 +115,6 @@ void FileSystem::RECENT_FILES(int num) {
     while (!temp_heap.isEmpty() && (num == -1 || count < num)) {
         File* file = temp_heap.extractMax();
         time_t mod_time = file->LastChangeT();
-        // Use localtime and put_time for robust local time formatting
         tm* ptm = localtime(&mod_time);
         stringstream ss;
         ss << put_time(ptm, "%a %b %d %H:%M:%S %Y");

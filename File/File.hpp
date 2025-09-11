@@ -4,7 +4,7 @@
 #include "../DataStructures/TreeNode.hpp"
 #include "../DataStructures/HashMap.hpp"
 #include <string>
-#include <ctime> // Required for time_t
+#include <ctime> 
 
 using namespace std;
 
@@ -15,10 +15,9 @@ private:
     TreeNode* curr_version;
     HashMap<int, TreeNode*>* version_map;
     int next_version_id;
-    time_t last_change_t; // Using time_t
+    time_t last_change_t; 
 
 public:
-    // All function signatures now use time_t
     File(const string& name, time_t creation_time);
     ~File();
 
@@ -35,4 +34,4 @@ public:
     void HISTORY() const;
 };
 
-#endif // FILE_HPP
+#endif

@@ -5,10 +5,12 @@
 #include <algorithm>
 #include <iostream>
 
+using namespace std;
+
 template <typename T, typename Comparator>
 class MaxHeap {
 private:
-    std::vector<T> heap;
+    vector<T> heap;
     Comparator compare;
 
     int parent(int i) { return (i - 1) / 2; }
@@ -28,14 +30,14 @@ private:
             largest = right;
         }
         if (largest != i) {
-            std::swap(heap[i], heap[largest]);
+            swap(heap[i], heap[largest]);
             heapifyDown(largest);
         }
     }
 
     void heapifyUp(int i) {
         while (i > 0 && compare(heap[parent(i)], heap[i])) {
-            std::swap(heap[i], heap[parent(i)]);
+            swap(heap[i], heap[parent(i)]);
             i = parent(i);
         }
     }
@@ -50,7 +52,7 @@ public:
 
     T extractMax() {
         if (isEmpty()) {
-            std::cerr << "Error: Attempted to extract from an empty heap. Returning default-constructed value." << std::endl;
+            cerr << "Error: Attempted to extract from an empty heap. Returning default-constructed value." << endl;
             return T();
         }
         T max_val = heap[0];
@@ -64,13 +66,12 @@ public:
 
     T peekMax() const {
         if (isEmpty()) {
-            std::cerr << "Error: Attempted to peek into an empty heap. Returning default-constructed value." << std::endl;
+            cerr << "Error: Attempted to peek into an empty heap. Returning default-constructed value." << endl;
             return T();
         }
         return heap[0];
     }
 
-    // Removed the duplicate isEmpty() function.
     bool isEmpty() const {
         return heap.empty();
     }
@@ -84,4 +85,4 @@ public:
     }
 };
 
-#endif // MAXHEAP_HPP
+#endif 
