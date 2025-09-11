@@ -1,8 +1,11 @@
 #include "FileSystem.hpp"
 #include <iostream>
 #include <vector>
+#include <ctime>
+#include <iomanip> // Required for time formatting
+#include <sstream> // Required for string stream
 
-FileSystem::FileSystem() : system_clock(0) {
+FileSystem::FileSystem() {
     files = new HashMap<std::string, File*>();
     recentFiles = new MaxHeap<File*, ChangeT>();
     biggestTree = new MaxHeap<File*, VersionCount>();
@@ -20,7 +23,8 @@ FileSystem::~FileSystem() {
 
 void FileSystem::rebuildHeaps() {
     recentFiles->clear();
-    biggestTree->clear();
+    biggestTree
+    ->clear();
     std::vector<File*> all_files = files->get_all_values();
     for (File* file_ptr : all_files) {
         recentFiles->INSERT(file_ptr);
@@ -33,8 +37,7 @@ void FileSystem::CREATE(const std::string& filename) {
         std::cerr << "Error: File '" << filename << "' already exists." << std::endl;
         return;
     }
-    system_clock++;
-    File* new_file = new File(filename, system_clock);
+    File* new_file = new File(filename, time(0));
     files->INSERT(filename, new_file);
     rebuildHeaps();
     std::cout << "File '" << filename << "' created with snapshot version 0." << std::endl;
@@ -55,8 +58,7 @@ void FileSystem::INSERT(const std::string& filename, const std::string& content)
         std::cerr << "Error: File '" << filename << "' not found." << std::endl;
         return;
     }
-    system_clock++;
-    (*file_ptr)->INSERT(content, system_clock);
+    (*file_ptr)->INSERT(content, time(0));
     rebuildHeaps();
 }
 
@@ -66,8 +68,7 @@ void FileSystem::UPDATE(const std::string& filename, const std::string& content)
         std::cerr << "Error: File '" << filename << "' not found." << std::endl;
         return;
     }
-    system_clock++;
-    (*file_ptr)->UPDATE(content, system_clock);
+    (*file_ptr)->UPDATE(content, time(0));
     rebuildHeaps();
 }
 
@@ -77,8 +78,7 @@ void FileSystem::SNAPSHOT(const std::string& filename, const std::string& messag
         std::cerr << "Error: File '" << filename << "' not found." << std::endl;
         return;
     }
-    system_clock++;
-    (*file_ptr)->SNAPSHOT(message, system_clock);
+    (*file_ptr)->SNAPSHOT(message, time(0));
 }
 
 void FileSystem::ROLLBACK(const std::string& filename, int versionID) {
@@ -88,7 +88,7 @@ void FileSystem::ROLLBACK(const std::string& filename, int versionID) {
         return;
     }
     if ((*file_ptr)->ROLLBACK(versionID)) {
-        std::cout << "Active version for '" << filename << "' set to " << (*file_ptr)->getActiveVersionId() << "." << std::endl;
+        std::cout << "Active version for '" << filename << "' set to " << (*file_ptr)->ActiveVersionId() << "." << std::endl;
     } else {
         if (versionID == -1) {
             std::cerr << "Error: Cannot ROLLBACK from root version." << std::endl;
@@ -113,7 +113,12 @@ void FileSystem::RECENT_FILES(int num) {
     int count = 0;
     while (!temp_heap.isEmpty() && (num == -1 || count < num)) {
         File* file = temp_heap.extractMax();
-        std::cout << "  - " << file->getFilename() << " (Last modified at time: " << file->LastChangeT() << ")" << std::endl;
+        time_t mod_time = file->LastChangeT();
+        // Use std::localtime and std::put_time for robust local time formatting
+        std::tm* ptm = std::localtime(&mod_time);
+        std::stringstream ss;
+        ss << std::put_time(ptm, "%a %b %d %H:%M:%S %Y");
+        std::cout << "  - " << file->getFilename() << " (Last modified: " << ss.str() << ")" << std::endl;
         count++;
     }
 }
@@ -124,7 +129,7 @@ void FileSystem::BIGGEST_TREES(int num) {
     int count = 0;
     while (!temp_heap.isEmpty() && (num == -1 || count < num)) {
         File* file = temp_heap.extractMax();
-        std::cout << "  - " << file->getFilename() << " (" << file->getTotalVersions() << " versions)" << std::endl;
+        std::cout << "  - " << file->getFilename() << " (" << file->TotalVersions() << " versions)" << std::endl;
         count++;
     }
 }
