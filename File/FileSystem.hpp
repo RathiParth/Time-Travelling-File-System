@@ -16,7 +16,7 @@ struct ChangeT {
 
 struct VersionCount {
     bool operator()(const File* a, const File* b) const {
-        return a->getTotalVersions() < b->getTotalVersions();
+        return a->TotalVersions() < b->TotalVersions();
     }
 };
 
