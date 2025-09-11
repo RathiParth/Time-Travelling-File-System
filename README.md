@@ -1,6 +1,6 @@
 # Time-Travelling File System
 
-This project is a simplified, in-memory version control system inspired by Git. It's designed to manage versioned files with support for branching and historical inspection, utilizing custom-built **Tree**, **HashMap**, and **MaHeap** data structures.
+This project is a simplified, in-memory version control system inspired by Git. It's designed to manage versioned files with support for branching and historical inspection, utilizing custom-built **Tree**, **HashMap**, and **MaxHeap** data structures.
 
 ---
 
