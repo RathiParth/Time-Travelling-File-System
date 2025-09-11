@@ -54,12 +54,21 @@ public:
             std::cerr << "Error: Attempted to extract from an empty heap. Terminating." << std::endl;
             exit(1);
         }
-        T max_val = heap;
-        heap = heap.back();
+        // 1. Store the root element (the max value).
+        T max_val = heap[0];
+        
+        // 2. Replace the root element with the last element.
+        heap[0] = heap.back();
+
+        // 3. Remove the last element.
         heap.pop_back();
+        
+        // 4. Call heapifyDown on the new root to restore the heap property.
         if (!isEmpty()) {
             heapifyDown(0);
         }
+        
+        // 5. Return the stored max value.
         return max_val;
     }
     
