@@ -6,6 +6,8 @@
 #include "../DataStructures/HashMap.hpp"
 #include <string>
 
+using namespace std;
+
 class File;
 
 struct ChangeT {
@@ -22,7 +24,7 @@ struct VersionCount {
 
 class FileSystem {
 private:
-    HashMap<std::string, File*>* files;
+    HashMap<string, File*>* files;
     MaxHeap<File*, ChangeT>* recentFiles;
     MaxHeap<File*, VersionCount>* biggestTree;
     unsigned long long system_clock;
@@ -33,13 +35,13 @@ public:
     FileSystem();
     ~FileSystem();
 
-    void CREATE(const std::string& filename);
-    void READ(const std::string& filename);
-    void INSERT(const std::string& filename, const std::string& content);
-    void UPDATE(const std::string& filename, const std::string& content);
-    void SNAPSHOT(const std::string& filename, const std::string& message);
-    void ROLLBACK(const std::string& filename, int versionID = -1);
-    void HISTORY(const std::string& filename);
+    void CREATE(const string& filename);
+    void READ(const string& filename);
+    void INSERT(const string& filename, const string& content);
+    void UPDATE(const string& filename, const string& content);
+    void SNAPSHOT(const string& filename, const string& message);
+    void ROLLBACK(const string& filename, int versionID = -1);
+    void HISTORY(const string& filename);
     void RECENT_FILES(int num);
     void BIGGEST_TREES(int num);
 };

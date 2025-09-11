@@ -5,14 +5,16 @@
 #include <iomanip> // Required for time formatting
 #include <sstream> // Required for string stream
 
+using namespace std;
+
 FileSystem::FileSystem() {
-    files = new HashMap<std::string, File*>();
+    files = new HashMap<string, File*>();
     recentFiles = new MaxHeap<File*, ChangeT>();
     biggestTree = new MaxHeap<File*, VersionCount>();
 }
 
 FileSystem::~FileSystem() {
-    std::vector<File*> all_files = files->get_all_values();
+    vector<File*> all_files = files->get_all_values();
     for (File* file : all_files) {
         delete file;
     }
@@ -23,85 +25,84 @@ FileSystem::~FileSystem() {
 
 void FileSystem::rebuildHeaps() {
     recentFiles->clear();
-    biggestTree
-    ->clear();
-    std::vector<File*> all_files = files->get_all_values();
+    biggestTree->clear();
+    vector<File*> all_files = files->get_all_values();
     for (File* file_ptr : all_files) {
         recentFiles->INSERT(file_ptr);
         biggestTree->INSERT(file_ptr);
     }
 }
 
-void FileSystem::CREATE(const std::string& filename) {
+void FileSystem::CREATE(const string& filename) {
     if (files->get(filename) != nullptr) {
-        std::cerr << "Error: File '" << filename << "' already exists." << std::endl;
+        cerr << "Error: File '" << filename << "' already exists." << endl;
         return;
     }
     File* new_file = new File(filename, time(0));
     files->INSERT(filename, new_file);
     rebuildHeaps();
-    std::cout << "File '" << filename << "' created with snapshot version 0." << std::endl;
+    cout << "File '" << filename << "' created with snapshot version 0." << endl;
 }
 
-void FileSystem::READ(const std::string& filename) {
+void FileSystem::READ(const string& filename) {
     File** file_ptr = files->get(filename);
     if (file_ptr == nullptr) {
-        std::cerr << "Error: File '" << filename << "' not found." << std::endl;
+        cerr << "Error: File '" << filename << "' not found." << endl;
         return;
     }
-    std::cout << (*file_ptr)->READ() << std::endl;
+    cout << (*file_ptr)->READ() << endl;
 }
 
-void FileSystem::INSERT(const std::string& filename, const std::string& content) {
+void FileSystem::INSERT(const string& filename, const string& content) {
     File** file_ptr = files->get(filename);
     if (file_ptr == nullptr) {
-        std::cerr << "Error: File '" << filename << "' not found." << std::endl;
+        cerr << "Error: File '" << filename << "' not found." << endl;
         return;
     }
     (*file_ptr)->INSERT(content, time(0));
     rebuildHeaps();
 }
 
-void FileSystem::UPDATE(const std::string& filename, const std::string& content) {
+void FileSystem::UPDATE(const string& filename, const string& content) {
     File** file_ptr = files->get(filename);
     if (file_ptr == nullptr) {
-        std::cerr << "Error: File '" << filename << "' not found." << std::endl;
+        cerr << "Error: File '" << filename << "' not found." << endl;
         return;
     }
     (*file_ptr)->UPDATE(content, time(0));
     rebuildHeaps();
 }
 
-void FileSystem::SNAPSHOT(const std::string& filename, const std::string& message) {
+void FileSystem::SNAPSHOT(const string& filename, const string& message) {
     File** file_ptr = files->get(filename);
     if (file_ptr == nullptr) {
-        std::cerr << "Error: File '" << filename << "' not found." << std::endl;
+        cerr << "Error: File '" << filename << "' not found." << endl;
         return;
     }
     (*file_ptr)->SNAPSHOT(message, time(0));
 }
 
-void FileSystem::ROLLBACK(const std::string& filename, int versionID) {
+void FileSystem::ROLLBACK(const string& filename, int versionID) {
     File** file_ptr = files->get(filename);
     if (file_ptr == nullptr) {
-        std::cerr << "Error: File '" << filename << "' not found." << std::endl;
+        cerr << "Error: File '" << filename << "' not found." << endl;
         return;
     }
     if ((*file_ptr)->ROLLBACK(versionID)) {
-        std::cout << "Active version for '" << filename << "' set to " << (*file_ptr)->ActiveVersionId() << "." << std::endl;
+        cout << "Active version for '" << filename << "' set to " << (*file_ptr)->ActiveVersionId() << "." << endl;
     } else {
         if (versionID == -1) {
-            std::cerr << "Error: Cannot ROLLBACK from root version." << std::endl;
+            cerr << "Error: Cannot ROLLBACK from root version." << endl;
         } else {
-            std::cerr << "Error: Version ID " << versionID << " not found for file '" << filename << "'." << std::endl;
+            cerr << "Error: Version ID " << versionID << " not found for file '" << filename << "'." << endl;
         }
     }
 }
 
-void FileSystem::HISTORY(const std::string& filename) {
+void FileSystem::HISTORY(const string& filename) {
     File** file_ptr = files->get(filename);
     if (file_ptr == nullptr) {
-        std::cerr << "Error: File '" << filename << "' not found." << std::endl;
+        cerr << "Error: File '" << filename << "' not found." << endl;
         return;
     }
     (*file_ptr)->HISTORY();
@@ -109,27 +110,27 @@ void FileSystem::HISTORY(const std::string& filename) {
 
 void FileSystem::RECENT_FILES(int num) {
     MaxHeap<File*, ChangeT> temp_heap = *recentFiles;
-    std::cout << "Most Recently Modified Files:" << std::endl;
+    cout << "Most Recently Modified Files:" << endl;
     int count = 0;
     while (!temp_heap.isEmpty() && (num == -1 || count < num)) {
         File* file = temp_heap.extractMax();
         time_t mod_time = file->LastChangeT();
-        // Use std::localtime and std::put_time for robust local time formatting
-        std::tm* ptm = std::localtime(&mod_time);
-        std::stringstream ss;
-        ss << std::put_time(ptm, "%a %b %d %H:%M:%S %Y");
-        std::cout << "  - " << file->getFilename() << " (Last modified: " << ss.str() << ")" << std::endl;
+        // Use localtime and put_time for robust local time formatting
+        tm* ptm = localtime(&mod_time);
+        stringstream ss;
+        ss << put_time(ptm, "%a %b %d %H:%M:%S %Y");
+        cout << "  - " << file->getFilename() << " (Last modified: " << ss.str() << ")" << endl;
         count++;
     }
 }
 
 void FileSystem::BIGGEST_TREES(int num) {
     MaxHeap<File*, VersionCount> temp_heap = *biggestTree;
-    std::cout << "Files with Most Versions:" << std::endl;
+    cout << "Files with Most Versions:" << endl;
     int count = 0;
     while (!temp_heap.isEmpty() && (num == -1 || count < num)) {
         File* file = temp_heap.extractMax();
-        std::cout << "  - " << file->getFilename() << " (" << file->TotalVersions() << " versions)" << std::endl;
+        cout << "  - " << file->getFilename() << " (" << file->TotalVersions() << " versions)" << endl;
         count++;
     }
 }

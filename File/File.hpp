@@ -6,9 +6,11 @@
 #include <string>
 #include <ctime> // Required for time_t
 
+using namespace std;
+
 class File {
 private:
-    std::string filename;
+    string filename;
     TreeNode* root;
     TreeNode* curr_version;
     HashMap<int, TreeNode*>* version_map;
@@ -17,18 +19,18 @@ private:
 
 public:
     // All function signatures now use time_t
-    File(const std::string& name, time_t creation_time);
+    File(const string& name, time_t creation_time);
     ~File();
 
-    std::string getFilename() const;
+    string getFilename() const;
     time_t LastChangeT() const;
     int TotalVersions() const;
     int ActiveVersionId() const;
 
-    std::string READ() const;
-    void INSERT(const std::string& content, time_t mod_time);
-    void UPDATE(const std::string& content, time_t mod_time);
-    void SNAPSHOT(const std::string& message, time_t snap_time);
+    string READ() const;
+    void INSERT(const string& content, time_t mod_time);
+    void UPDATE(const string& content, time_t mod_time);
+    void SNAPSHOT(const string& message, time_t snap_time);
     bool ROLLBACK(int versionID = -1);
     void HISTORY() const;
 };

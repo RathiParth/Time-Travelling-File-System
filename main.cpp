@@ -4,9 +4,11 @@
 #include <sstream>
 #include <vector>
 
-std::string remain_content(std::stringstream& ss) {
-    std::string content;
-    std::string temp;
+using namespace std;
+
+string remain_content(stringstream& ss) {
+    string content;
+    string temp;
     if (ss >> temp) {
         content += temp;
         while (ss >> temp) {
@@ -18,58 +20,58 @@ std::string remain_content(std::stringstream& ss) {
 
 int main() {
     FileSystem fs;
-    std::string line;
+    string line;
 
-    while (std::getline(std::cin, line)) {
-        std::stringstream ss(line);
-        std::string command;
+    while (getline(cin, line)) {
+        stringstream ss(line);
+        string command;
         ss >> command;
 
         if (command == "CREATE") {
-            std::string filename;
+            string filename;
             if (ss >> filename) fs.CREATE(filename);
-            else std::cerr << "Usage: CREATE <filename>" << std::endl;
+            else cerr << "Usage: CREATE <filename>" << endl;
         } else if (command == "READ") {
-            std::string filename;
+            string filename;
             if (ss >> filename) fs.READ(filename);
-            else std::cerr << "Usage: READ <filename>" << std::endl;
+            else cerr << "Usage: READ <filename>" << endl;
         } else if (command == "INSERT") {
-            std::string filename;
+            string filename;
             if (ss >> filename) {
-                std::string content = remain_content(ss);
+                string content = remain_content(ss);
                 fs.INSERT(filename, content);
             } else {
-                std::cerr << "Usage: INSERT <filename> <content>" << std::endl;
+                cerr << "Usage: INSERT <filename> <content>" << endl;
             }
         } else if (command == "UPDATE") {
-            std::string filename;
+            string filename;
             if (ss >> filename) {
-                std::string content = remain_content(ss);
+                string content = remain_content(ss);
                 fs.UPDATE(filename, content);
             } else {
-                std::cerr << "Usage: UPDATE <filename> <content>" << std::endl;
+                cerr << "Usage: UPDATE <filename> <content>" << endl;
             }
         } else if (command == "SNAPSHOT") {
-            std::string filename;
+            string filename;
             if (ss >> filename) {
-                std::string message = remain_content(ss);
+                string message = remain_content(ss);
                 fs.SNAPSHOT(filename, message);
             } else {
-                std::cerr << "Usage: SNAPSHOT <filename> <message>" << std::endl;
+                cerr << "Usage: SNAPSHOT <filename> <message>" << endl;
             }
         } else if (command == "ROLLBACK") {
-            std::string filename;
+            string filename;
             if (ss >> filename) {
                 int versionID;
                 if (ss >> versionID) fs.ROLLBACK(filename, versionID);
                 else fs.ROLLBACK(filename);
             } else {
-                std::cerr << "Usage: ROLLBACK <filename>[versionID]" << std::endl;
+                cerr << "Usage: ROLLBACK <filename>[versionID]" << endl;
             }
         } else if (command == "HISTORY") {
-            std::string filename;
+            string filename;
             if (ss >> filename) fs.HISTORY(filename);
-            else std::cerr << "Usage: HISTORY <filename>" << std::endl;
+            else cerr << "Usage: HISTORY <filename>" << endl;
         } else if (command == "RECENT_FILES") {
             int num;
             if (ss >> num) fs.RECENT_FILES(num);
@@ -79,7 +81,7 @@ int main() {
             if (ss >> num) fs.BIGGEST_TREES(num);
             else fs.BIGGEST_TREES(-1);
         } else if (!command.empty()) {
-            std::cerr << "Error: Unknown command '" << command << "'." << std::endl;
+            cerr << "Error: Unknown command '" << command << "'." << endl;
         }
     }
 
