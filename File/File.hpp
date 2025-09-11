@@ -4,6 +4,7 @@
 #include "../DataStructures/TreeNode.hpp"
 #include "../DataStructures/HashMap.hpp"
 #include <string>
+#include <ctime> // Required for time_t
 
 class File {
 private:
@@ -12,24 +13,24 @@ private:
     TreeNode* curr_version;
     HashMap<int, TreeNode*>* version_map;
     int next_version_id;
-    unsigned long long last_change_t;
+    time_t last_change_t; // Using time_t
 
 public:
-    File(const std::string& name, unsigned long long creation_time);
+    // All function signatures now use time_t
+    File(const std::string& name, time_t creation_time);
     ~File();
 
     std::string getFilename() const;
-    unsigned long long LastChangeT() const;
-    int getTotalVersions() const;
-    int getActiveVersionId() const;
+    time_t LastChangeT() const;
+    int TotalVersions() const;
+    int ActiveVersionId() const;
 
     std::string READ() const;
-    void INSERT(const std::string& content, unsigned long long mod_time);
-    void UPDATE(const std::string& content, unsigned long long mod_time);
-    void SNAPSHOT(const std::string& message, unsigned long long snap_time);
+    void INSERT(const std::string& content, time_t mod_time);
+    void UPDATE(const std::string& content, time_t mod_time);
+    void SNAPSHOT(const std::string& message, time_t snap_time);
     bool ROLLBACK(int versionID = -1);
     void HISTORY() const;
 };
 
 #endif // FILE_HPP
-
