@@ -45,14 +45,14 @@ private:
 public:
     MaxHeap(Comparator comp = Comparator()) : compare(comp) {}
 
-    void INSERT(const T& value) {
-        heap.push_back(value);
+    void INSERT(const T& val) {
+        heap.push_back(val);
         heapifyUp(heap.size() - 1);
     }
 
     T extractMax() {
         if (isEmpty()) {
-            cerr << "Error: Attempted to extract from an empty heap. Returning default-constructed value." << endl;
+            cerr << "Error: Attempted to extract from an empty heap. Returning default-constructed val." << endl;
             return T();
         }
         T max_val = heap[0];
@@ -66,7 +66,7 @@ public:
 
     T peekMax() const {
         if (isEmpty()) {
-            cerr << "Error: Attempted to peek into an empty heap. Returning default-constructed value." << endl;
+            cerr << "Error: Attempted to peek into an empty heap. Returning default-constructed val." << endl;
             return T();
         }
         return heap[0];

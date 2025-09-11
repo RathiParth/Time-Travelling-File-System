@@ -9,17 +9,14 @@ using namespace std;
 template <typename K>
 struct KeyHasher {
     size_t operator()(const K& key, int capacity) const {
-        // A simple hash for integer types.
         return static_cast<size_t>(key) % capacity;
     }
 };
 
-// Template specialization for string keys.
 template <>
 struct KeyHasher<string> {
     size_t operator()(const string& key, int capacity) const {
         size_t hash = 0;
-        // A common string hashing algorithm.
         for (char c : key) {
             hash = hash * 31 + c;
         }
@@ -32,14 +29,14 @@ class HashMap {
 private:
     struct HashNode {
         K key;
-        V value; // Corrected member name from 'val' to 'value' for consistency
+        V val; 
         HashNode* next;
-        HashNode(K k, V v) : key(k), value(v), next(nullptr) {}
+        HashNode(K k, V v) : key(k), val(v), next(nullptr) {}
     };
 
     vector<HashNode*> buckets;
     int capacity;
-    int num_elements; // Corrected member name from 'numElements' to 'num_elements'
+    int num_elements; 
     KeyHasher<K> hasher;
 
     int hash(const K& key) const {
@@ -67,7 +64,7 @@ public:
         HashNode* entry = buckets[i];
         while (entry != nullptr) {
             if (entry->key == key) {
-                return &(entry->value);
+                return &(entry->val);
             }
             entry = entry->next;
         }
@@ -80,7 +77,7 @@ public:
         HashNode* curr = head;
         while (curr != nullptr) {
             if (curr->key == key) {
-                curr->value = val;
+                curr->val = val;
                 return;
             }
             curr = curr->next;
@@ -91,12 +88,12 @@ public:
         num_elements++;
     }
 
-    vector<V> get_all_values() const {
+    vector<V> allVal() const {
         vector<V> values;
         for (int i = 0; i < capacity; ++i) {
             HashNode* entry = buckets[i];
             while (entry != nullptr) {
-                values.push_back(entry->value);
+                values.push_back(entry->val);
                 entry = entry->next;
             }
         }

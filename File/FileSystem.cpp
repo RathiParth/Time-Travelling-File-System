@@ -14,7 +14,7 @@ FileSystem::FileSystem() {
 }
 
 FileSystem::~FileSystem() {
-    vector<File*> all_files = files->get_all_values();
+    vector<File*> all_files = files->allVal();
     for (File* file : all_files) {
         delete file;
     }
@@ -26,7 +26,7 @@ FileSystem::~FileSystem() {
 void FileSystem::rebuildHeaps() {
     recentFiles->clear();
     biggestTree->clear();
-    vector<File*> all_files = files->get_all_values();
+    vector<File*> all_files = files->allVal();
     for (File* file_ptr : all_files) {
         recentFiles->INSERT(file_ptr);
         biggestTree->INSERT(file_ptr);
