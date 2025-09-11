@@ -64,7 +64,7 @@ int main() {
                 if (ss >> versionID) fs.ROLLBACK(filename, versionID);
                 else fs.ROLLBACK(filename);
             } else {
-                std::cerr << "Usage: ROLLBACK <filename>" << std::endl;
+                std::cerr << "Usage: ROLLBACK <filename>[versionID]" << std::endl;
             }
         } else if (command == "HISTORY") {
             std::string filename;
