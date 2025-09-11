@@ -23,8 +23,8 @@ struct VersionCount {
 class FileSystem {
 private:
     HashMap<std::string, File*>* files;
-    MaxHeap<File*, ChangeT>* recent_files_heap;
-    MaxHeap<File*, VersionCount>* biggest_trees_heap;
+    MaxHeap<File*, ChangeT>* recentFiles;
+    MaxHeap<File*, VersionCount>* biggestTree;
     unsigned long long system_clock;
 
     void rebuildHeaps();

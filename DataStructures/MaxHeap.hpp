@@ -43,12 +43,23 @@ private:
 public:
     MaxHeap(Comparator comp = Comparator()) : compare(comp) {}
 
-    bool isEmpty() const {
-        return heap.empty();
-    }
     void INSERT(const T& value) {
         heap.push_back(value);
         heapifyUp(heap.size() - 1);
+    }
+
+    T extractMax() {
+        if (isEmpty()) {
+            std::cerr << "Error: Attempted to extract from an empty heap. Returning default-constructed value." << std::endl;
+            return T();
+        }
+        T max_val = heap[0];
+        heap[0] = heap.back();
+        heap.pop_back();
+        if (!isEmpty()) {
+            heapifyDown(0);
+        }
+        return max_val;
     }
 
     T peekMax() const {
@@ -59,29 +70,7 @@ public:
         return heap[0];
     }
 
-    T extractMax() {
-        if (isEmpty()) {
-            std::cerr << "Error: Attempted to extract from an empty heap. Returning default-constructed value." << std::endl;
-            return T();
-        }
-        // 1. Store the root element (the max value).
-        T max_val = heap[0];
-        
-        // 2. Replace the root element with the last element.
-        heap[0] = heap.back();
-
-        // 3. Remove the last element.
-        heap.pop_back();
-        
-        // 4. Call heapifyDown on the new root to restore the heap property.
-        if (!isEmpty()) {
-            heapifyDown(0);
-        }
-        
-        // 5. Return the stored max value.
-        return max_val;
-    }    
-
+    // Removed the duplicate isEmpty() function.
     bool isEmpty() const {
         return heap.empty();
     }
@@ -96,4 +85,3 @@ public:
 };
 
 #endif // MAXHEAP_HPP
-

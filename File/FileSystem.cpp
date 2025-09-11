@@ -4,8 +4,8 @@
 
 FileSystem::FileSystem() : system_clock(0) {
     files = new HashMap<std::string, File*>();
-    recent_files_heap = new MaxHeap<File*, ChangeT>();
-    biggest_trees_heap = new MaxHeap<File*, VersionCount>();
+    recentFiles = new MaxHeap<File*, ChangeT>();
+    biggestTree = new MaxHeap<File*, VersionCount>();
 }
 
 FileSystem::~FileSystem() {
@@ -14,22 +14,22 @@ FileSystem::~FileSystem() {
         delete file;
     }
     delete files;
-    delete recent_files_heap;
-    delete biggest_trees_heap;
+    delete recentFiles;
+    delete biggestTree;
 }
 
 void FileSystem::rebuildHeaps() {
-    recent_files_heap->clear();
-    biggest_trees_heap->clear();
+    recentFiles->clear();
+    biggestTree->clear();
     std::vector<File*> all_files = files->get_all_values();
     for (File* file_ptr : all_files) {
-        recent_files_heap->INSERT(file_ptr);
-        biggest_trees_heap->INSERT(file_ptr);
+        recentFiles->INSERT(file_ptr);
+        biggestTree->INSERT(file_ptr);
     }
 }
 
 void FileSystem::CREATE(const std::string& filename) {
-    if (files->get(filename)!= nullptr) {
+    if (files->get(filename) != nullptr) {
         std::cerr << "Error: File '" << filename << "' already exists." << std::endl;
         return;
     }
@@ -37,7 +37,7 @@ void FileSystem::CREATE(const std::string& filename) {
     File* new_file = new File(filename, system_clock);
     files->INSERT(filename, new_file);
     rebuildHeaps();
-    std::cout << "Created file '" << filename << "'." << std::endl;
+    std::cout << "File '" << filename << "' created with snapshot version 0." << std::endl;
 }
 
 void FileSystem::READ(const std::string& filename) {
@@ -87,7 +87,9 @@ void FileSystem::ROLLBACK(const std::string& filename, int versionID) {
         std::cerr << "Error: File '" << filename << "' not found." << std::endl;
         return;
     }
-    if (!(*file_ptr)->ROLLBACK(versionID)) {
+    if ((*file_ptr)->ROLLBACK(versionID)) {
+        std::cout << "Active version for '" << filename << "' set to " << (*file_ptr)->getActiveVersionId() << "." << std::endl;
+    } else {
         if (versionID == -1) {
             std::cerr << "Error: Cannot ROLLBACK from root version." << std::endl;
         } else {
@@ -106,7 +108,7 @@ void FileSystem::HISTORY(const std::string& filename) {
 }
 
 void FileSystem::RECENT_FILES(int num) {
-    MaxHeap<File*, ChangeT> temp_heap = *recent_files_heap;
+    MaxHeap<File*, ChangeT> temp_heap = *recentFiles;
     std::cout << "Most Recently Modified Files:" << std::endl;
     int count = 0;
     while (!temp_heap.isEmpty() && (num == -1 || count < num)) {
@@ -117,7 +119,7 @@ void FileSystem::RECENT_FILES(int num) {
 }
 
 void FileSystem::BIGGEST_TREES(int num) {
-    MaxHeap<File*, VersionCount> temp_heap = *biggest_trees_heap;
+    MaxHeap<File*, VersionCount> temp_heap = *biggestTree;
     std::cout << "Files with Most Versions:" << std::endl;
     int count = 0;
     while (!temp_heap.isEmpty() && (num == -1 || count < num)) {
@@ -126,3 +128,4 @@ void FileSystem::BIGGEST_TREES(int num) {
         count++;
     }
 }
+

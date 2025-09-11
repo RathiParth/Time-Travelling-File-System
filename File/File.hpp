@@ -21,6 +21,7 @@ public:
     std::string getFilename() const;
     unsigned long long LastChangeT() const;
     int getTotalVersions() const;
+    int getActiveVersionId() const;
 
     std::string READ() const;
     void INSERT(const std::string& content, unsigned long long mod_time);
@@ -31,3 +32,4 @@ public:
 };
 
 #endif // FILE_HPP
+
